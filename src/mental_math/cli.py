@@ -15,16 +15,20 @@ def main() -> None:
 
     args = parser.parse_args()
 
+    #Create a mental math session
     session : calc.Session = calc.Session(args.questions, args.ops, args.min, args.max)
+    #While the current number of questions is below the value asked by the user, print the question and get the answer
     while not session.is_finished():
         print(session.create_questions())
         answer = ask_int()
-        print("Correct !" if session.check_answer(answer) else "Faux.")
+        #Print correct if correct or False instead
+        print("Correct !" if session.check_answer(answer) else "False.")
     print(f"Score : {session.score}/{args.questions}")
 
-
+#Get the user input
 def ask_int() -> int:
     while True:
+        #Try to convert the user input as an integer or raise an Exception
         try:
             return int(input())
         except ValueError:
