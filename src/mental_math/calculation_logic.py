@@ -1,11 +1,14 @@
 from dataclasses import dataclass
 from random import randint,choice
+import math
 
-#A dataclass used to create the list of questions with the current calculation, the user input and if the user was right or not
+#A dataclass used to create the list of questions with the current calculation, the user input, the time to answer, if the user was right
 @dataclass
 class Result:
     question : str
-    user_answer : int 
+    solution : int
+    user_answer : int
+    time : float
     correct : bool
     
 
@@ -13,7 +16,7 @@ class Result:
 class Session:
     #Set the score value to 0
     score : int = 0
-
+    
     #Constructor of the class 
     def __init__(self, nb_questions: int, operations: list[str], min: int, max: int) -> None:
         self.nb_questions : int = nb_questions
@@ -54,19 +57,32 @@ class Session:
         return len(self.results) >= self.nb_questions
 
     #Check if the user input is equal to the question answer and return it as a boolean
-    def check_answer(self, user_anwser : int) -> bool:
+    def check_answer(self, user_anwser : int, question_time: float) -> bool:
         #If the program check a user input before a question were asked, raise an exception
         if self._current is None:
             raise RuntimeError(f"")
         
         question, answer = self._current
         is_correct : bool = user_anwser == answer
+        real_question_time : float = question_time
 
-        #Add the result of this question to the list of existing questions
-        self.results.append(Result(question, user_anwser, is_correct))
-
-        #Increase score value if the user answer was correct
-        if is_correct:
+        #If user answer wrong, add 5 seconds penalty
+        if not is_correct:
+            real_question_time = 5
+        else :  #Increase score value if the user answer was correct
             self.score += 1
         
+        #Add the result of this question to the list of existing questions
+        self.results.append(Result(question, answer, user_anwser, question_time, is_correct))
+
+       
+        
         return is_correct
+
+    #Calculate the total time of the session
+    def calculate_time(self) -> float:
+        total_time : float = 0
+        for result in self.results:
+            total_time += result.time
+        mean_time : float = total_time/len(self.results) #Useless for now but might be used later
+        return total_time
