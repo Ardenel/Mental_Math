@@ -68,12 +68,12 @@ class Session:
 
         #If user answer wrong, add 5 seconds penalty
         if not is_correct:
-            real_question_time = 5
+            real_question_time += 5
         else :  #Increase score value if the user answer was correct
             self.score += 1
         
         #Add the result of this question to the list of existing questions
-        self.results.append(Result(question, answer, user_anwser, question_time, is_correct))
+        self.results.append(Result(question, answer, user_anwser, real_question_time, is_correct))
 
        
         
